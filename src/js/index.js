@@ -131,6 +131,9 @@ const routes = {
 
 
 
+
+
+var exerciseSettings = {};
 var checkedUserLogged = false;
 axios
     .post("/kr/?type=getCurrentUser")

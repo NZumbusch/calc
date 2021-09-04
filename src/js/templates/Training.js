@@ -14,7 +14,19 @@ main.templates["Training"] = () => {
 
 
                     <p class="card-text">
-                        Als Produkt des Hochbegabtenzuges des Heinrich-Suso-Gymnasiums Konstanz ist diese WebApp und alles Beiliegende - sofern nicht anders deklariert - nicht ohne schriftliche Erlaubnis durch eben jenen zu verwenden. bei Fragen kontakieren Sie uns bitte.
+                       Im Trainingsmodus hast du die Moeglichkeit werden dir keine Punkte auf deine Elo-verrechnet. Auch kannst du dir Tips, Loesungen und die Trickbeschreibung zu den Aufgaben anzeigen lassen. <br>
+                       Ein weitere Besonderheit des Trainings-Modus ist, dass du dir die Tricks aussuchen kannst, zu denen du trainieren willst.
+                    </p>
+
+
+                    <p class="card-text">
+                        <div class="competition-start">
+                            <p>Starten...</p>
+
+                            <a onclick="joinTraining();" data-link class="roundBtn">
+                                <i class="bi bi-play-circle"></i>
+                            </a>
+                        </div>
                     </p>
                 </div>
 
@@ -23,4 +35,15 @@ main.templates["Training"] = () => {
         </div>
         `});
     })
+}
+
+
+function joinTraining () {
+    exerciseSettings = {
+        competition: false,
+        trick: true
+    }
+
+    
+    window.location.hash = "exercise";
 }
