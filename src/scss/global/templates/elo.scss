@@ -1,0 +1,95 @@
+.eloRanking {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+
+    &-top3 {
+        width: 420px;
+        max-width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: center;
+        padding-top: 7vh;
+
+        > div {
+            width: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+
+            h1 {
+                font-size: 1.6em;
+                color: var(--dark);
+            }
+
+            p {
+                position: absolute;
+                bottom: 6px;
+                left: 0px;
+                right: 0px;
+                text-align: center;
+                color: var(--dark);
+                font-style: italic;
+                font-size: 0.9em;
+                line-height: 0.9em;
+                margin: 0px;
+            }
+        }
+        &-0 {
+            height: 120px;
+            background-color: goldenrod;
+        }
+        &-1 {
+            background-color: silver;
+            height: 90px;
+        }
+        &-2 {
+            background-color: #cd7f32;
+            height: 70px;
+        }
+    }
+
+
+    &-list {
+        width: 620px;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+
+
+        &-element {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 1.2rem;
+            @media screen and (max-width: 800px) {
+                font-size: 1.1rem;
+            }
+            color: var(--dark);
+
+            > div { margin: 0px 5px; }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+

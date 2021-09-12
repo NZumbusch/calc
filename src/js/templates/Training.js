@@ -41,7 +41,7 @@ main.templates["Training"] = () => {
 function joinTraining () {
     exerciseSettings = {
         competition: false,
-        trick: true
+        amount: 15
     }
 
     

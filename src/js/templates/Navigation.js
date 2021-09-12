@@ -30,12 +30,19 @@ main.templates["Navigation"] = () =>{
                     ? '' :
                     `<li><a onclick="axios.post('/kr/?type=logout').then((resolve) => {window.location.reload();});" href="#dashboard" data-link><i class="bi bi-box-arrow-left navbar-sidebar-list-link-element-icon"></i>Logout</a></li>`
                 }
+
+
+                ${
+                    (user === false && user.userType === 0) 
+                    ? '' :
+                    `<li><a href="#moderation" data-link><i class="bi bi-award navbar-sidebar-list-link-element-icon"></i>Moderation</a></li>`
+                }
             </ul>
         </header>
 
         <div class="navbar-sidebar-container">
             <div class="navbar-sidebar">
-                <img class="navbar-sidebar-logo" src="">
+                <img class="navbar-sidebar-logo" src="/calc/assets/icon/kopfrechnen-logo.svg">
                 <h1 class="navbar-sidebar-heading"><span onclick="window.location.hash='';">Kopfrechnen</span></h1>
                 <ul class="navbar-sidebar-list">
                     ${
@@ -61,6 +68,12 @@ main.templates["Navigation"] = () =>{
                         (user === false) 
                         ? '' :
                         `<li class="navbar-sidebar-list-spacer"></li><li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" onclick="axios.post('/kr/?type=logout').then((resolve) => {window.location.reload();});" href="#dashboard" data-link onclick="hide_navbar();"><i class="bi bi-box-arrow-left navbar-sidebar-list-link-element-icon"></i>Logout</a></li>`
+                    }
+
+                    ${
+                        (user === false && user.userType !== 2) 
+                        ? '' :
+                        `<li class="navbar-sidebar-list-spacer"></li><li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element"  href="#moderation" data-link onclick="hide_navbar();"><i class="bi bi-award navbar-sidebar-list-link-element-icon"></i>Moderation</a></li>`
                     }
                 </ul>
             </div>

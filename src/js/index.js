@@ -126,7 +126,8 @@ const routes = {
     training: {callback: viewSite, js: "Training", requiresAccount: true},
     exercise: {callback: viewBareSite, js: "Exercise", requiresAccount: true},
     elo: {callback: viewSite, js: "Elo", requiresAccount: false},
-    account: {callback: viewSite, js: "Account", requiresAccount: true}
+    account: {callback: viewSite, js: "Account", requiresAccount: true},
+    moderation: {callback: viewSite, js: "Moderation", requiresAccount: true}
 };
 
 
