@@ -1,0 +1,234 @@
+.tricks {
+    width: 100%;
+    height: auto;
+
+    &-navigation {
+        width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+        
+        &-upper {
+            width: 100%;
+            height: 40px;
+
+            background-color: var(--teal);
+            border-radius: 4px;
+            padding: 3px 7px;
+
+
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            &-list {
+                font-size: 20px;
+                height: 20px;
+                line-height: 20px;
+                padding: 5px;
+                cursor: pointer;
+            }
+            &-square {
+                font-size: 16px;
+                height: 16px;
+                line-height: 16px;
+                padding: 7px;
+                cursor: pointer;
+                padding-left: 0px;
+            }
+
+            &-show {
+                padding: 5px;
+                line-height: 20px;
+                cursor: pointer;
+            }
+        }
+    }
+
+
+
+    &-list {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+
+        transition: all 0.5s linear;
+
+        &-element {
+            flex-grow: 1;
+            margin: 10px;
+            box-sizing: border-box;
+            padding: 10px;
+            width: 300px;
+            max-width: 300px;
+            height: 150px;
+            @media screen and (max-width: 200px) {width: 100%;}
+
+            border: 2px solid var(--teal);
+            border-radius: 5px;
+
+            position: relative;
+
+            transition: all 0.5s linear;
+
+            
+
+
+            &-title {
+                font-size: 1.6em;
+                color: var(--dark);
+                line-height: 1.1em;
+                margin: 0px;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+
+            &-author {
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+                width: auto;
+                font-size: 0.9em;
+                color: var(--dark);
+                font-style: italic;
+                margin: 0.5em 0.7em;
+            }
+
+
+
+            &-marklearned {
+                position: absolute;
+                bottom: 3em;
+                right: 0px;
+                width: auto;
+                font-size: 1em;
+                color: var(--dark);
+                margin: 0.5em 0.7em;
+                font-weight: 700;
+                
+                > span {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
+
+
+            &-difficulty {
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+                font-size: 1.05em;
+                margin: 0.5em 0.7em;
+                border-radius: 100000px; // Just make it 'round
+                padding: 0.4em;
+
+
+                > i {
+                    padding-right: 0.2em;
+                }
+            }
+            &-difficulty.easy {color: rgb(0, 85, 0); background-color: rgba(0, 128, 0, 0.6);}
+            &-difficulty.medium {color: rgb(134, 87, 0); background-color: rgba(255, 166, 0, 0.6);}
+            &-difficulty.hard {color: rgb(128, 0, 0); background-color: rgba(255, 0, 0, 0.6);}
+        }
+        &-element.learned {
+            background-color: rgba(0, 143, 88, 0.2);
+        }
+        &-element.unknown {
+            background-color: rgba(128, 128, 128, 0.2);
+        }
+    }
+    &-list.wide {
+        .tricks-list-element {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            max-width: 100000px;
+
+
+            &-difficulty {
+                position: relative;
+                width: auto;
+                display: inline-block;
+                margin: 0px;
+                margin-right: 10px;
+            }
+
+            &-marklearned { bottom: 1.4em; }
+        }
+    }
+}
+
+
+
+.trick-modal {
+    position: fixed;
+    top: 0px; 
+    bottom: 0px; 
+    left: 0px; 
+    right: 0px; 
+    margin: 0px; 
+    height: auto; 
+    width: auto;
+
+
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,.15);
+    z-index: 4;
+    padding: 0px;
+
+
+    overflow-y: hidden;
+
+
+    &-navigation {
+        height: 30px;
+        width: 100%;
+        background-color: var(--teal);
+
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        left: 0px;  
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        > div {
+            font-size: 1em;
+            color: var(--dark);
+            padding: 0.3em;
+        }
+        &-close:hover { cursor: pointer; text-decoration: underline; }
+    }
+
+    &-container {
+        width: 100%;
+        height: calc(100% - 30px);
+        border-radius: 10px;
+
+        position: absolute;
+        top: 30px;
+        right: 0px;
+        left: 0px;  
+    }
+}
+.trick-modal::-webkit-scrollbar {
+    display: none;
+}
+  
+/* Hide scrollbar for IE, Edge and Firefox */
+.trick-modal {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+

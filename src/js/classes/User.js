@@ -3,6 +3,7 @@ var user = false;
 
 function loginUser (loginData) {
     user = {
+        userId: loginData.userId,
         userType: loginData.userType,
         userName: loginData.userName,
         userSurname: loginData.userSurname,
@@ -18,7 +19,7 @@ function loginUser (loginData) {
                 if (this.getCookieSettings() && setting in this.getCookieSettings()) {
                     return this.getCookieSettings()[setting];
                 } else {
-                    return false;
+                    return undefined; // setting can also be false
                 }
             }
         },
@@ -32,15 +33,31 @@ function loginUser (loginData) {
             }
         },
         getSettingDefault (setting, standart) {
-            if (this.getSetting(setting)) {
+            if (this.getSetting(setting) !== undefined) {
                 return this.getSetting(setting);
             } else {
                 return standart;
             }
         },
+        executeIfSettingTrue(setting, cb, undefinedToo = false) {
+            if (this.getSetting(setting) === true || (undefinedToo === true && this.getSetting(setting) === undefined)) {
+                cb();
+            }
+        },
+        executeIfSettingFalse(setting, cb, undefinedToo = false) {
+            if (this.getSetting(setting) === false || (undefinedToo === true && this.getSetting(setting) === undefined)) {
+                cb();
+            }
+        },
         setCookieSetting (setting, value) {
             let settings = this.getCookieSettings();
-            settings[setting] = value.toString();
+
+            if (value !== false && value !== true) {
+                settings[setting] = value.toString();
+            } else {
+                settings[setting] = value;
+            }
+
             main.utility.setCookie("kopfrechnenBrowserSettings", JSON.stringify(settings));
         }
     }

@@ -6,10 +6,10 @@ main.templates["Competition"] = () => {
         <div class="container">
             <div class="card mt-5">
                 <div class="card-body">
-                    <h1 class="card-title">Competition</h1>
+                    <h1 class="card-title">Wettkampf</h1>
 
                     <p class="card-text">
-                        Nachdem du im <a href="#training" data-link>Training</a> deine Faehigkeiten im Kopfrechnen auf den besten Stand gebracht hast kannst du hier um Elo kaempfen. Dabei gilt: Je schwerer die Aufgabe, desto mehr Punkte gibt Sie, je hoeher deine Elo, je laenger du brauchst, desto weniger Punkte bekommst du pro Aufgabe.
+                        Nachdem du im <a href="#training" data-link>Training</a> deine Fähigkeiten im Kopfrechnen auf den besten Stand gebracht hast kannst du hier um Elo kämpfen. Dabei gilt: Je schwerer die Aufgabe, desto mehr Punkte gibt Sie, je höher deine Elo, je länger du brauchst, desto weniger Punkte bekommst du pro Aufgabe.
                     </p>
 
                     <p class="card-text">
@@ -39,8 +39,8 @@ main.templates["Competition"] = () => {
 
 function joinCompetition () {
     exerciseSettings = {
-        competition: true,
-        amount: 15
+        type: "competition",
+        amount: user.getSettingDefault("defaultCompetitionExerciseAmount", 10)
     }
 
 

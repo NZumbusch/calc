@@ -21,27 +21,52 @@ main.templates["Exercise"] = () => {
         
         `;
         resolve({html: html, callback: () => {
-            if (exerciseSettings.amount === undefined) {
+            if (exerciseSettings.type === undefined) {
                 exerciseSettings = {
-                    competition: false,
-                    amount: 1
+                    type: "training",
+                    amount: 5
                 }
             }
 
-            setupExercises();
+            if (exerciseSettings.type === "training" || !user.getSetting("preventEloExercises")) {
+                setupExercises();
+            } else {
+                showEloDisabledPage();
+            }
         }});
     })
 }
 
 
 var exerciseData;
+var exerciseAdditionalData;
+var exercisesToDoAmount;
+var exercisesMistakeAmount;
+var startElo;
 function setupExercises () {
+    let url = '';
+    if (exerciseSettings.type === "test") {
+        url = `/kr/?type=exercise&exercise=getPack&exerciseType=${exerciseSettings.type}&testTrickId=${exerciseSettings.testTrickId}`;
+    } else {
+        url = `/kr/?type=exercise&exercise=getPack&amount=${exerciseSettings.amount.toString()}&exerciseType=${exerciseSettings.type}${exerciseSettings.trainingTrickId!==undefined ? `&trainingTrickId=${exerciseSettings.trainingTrickId}` : ''}`;
+    }
+
+
     axios
-        .post(`/kr/?type=exercise&exercise=getPack&amount=${exerciseSettings.amount.toString()}&exerciseType=${exerciseSettings.competition ? 'competition' : 'training'}`)
+        .post(url)
         .then((resolve) => {
             if (resolve.data.type === "success") {
-                exerciseData = resolve.data.data;
+
+                exerciseData = resolve.data.data.pack;
+                exerciseAdditionalData = resolve.data.data.data;
+                exercisesToDoAmount = resolve.data.data.pack.length;
+                exercisesMistakeAmount = 0;
+                startElo = user.userElo;
                 showExercise(0);
+            } else if (resolve.data.error === "Cooldownerror") {
+                showCooldownPage();
+            } else if (resolve.data.error === "Servererror") {
+                showServererrorPage();
             }
         })
 }
@@ -51,7 +76,7 @@ function setExerciseHTML (exercise, amount, index) {
     document.querySelector(".exercise-container").innerHTML = '<div class="exercise-container-position"></div>';
 
     for (let i = 0; i < amount; i++) {
-        document.querySelector(".exercise-container-position").innerHTML += `<div class="exercise-page-position-element ${i === index ? 'active' : ''}"></div>`;
+        document.querySelector(".exercise-container-position").innerHTML += `<div class="exercise-container-position-element ${i === index ? 'active' : ''}"></div>`;
     }
 
     document.querySelector(".exercise-container").innerHTML += `
@@ -63,7 +88,7 @@ function setExerciseHTML (exercise, amount, index) {
                 </p>
 
                 <p class="exercise-container-page-info-info">
-                    ${exerciseSettings.competition ? `Wettbewerb${user.userElo !== undefined ? ' - ' + user.userElo  + ' Elo': ''}` : 'Training'}
+                    ${exerciseSettings.type==="competition" ? `Wettbewerb${user.userElo !== undefined ? ' - ' + user.userElo  + ' Elo': ''}` : `${exerciseSettings.type==="test" ? 'Trick-Test - <span></span>' : 'Training'}`}
                 </p>
 
                 <p class="exercise-container-page-info-time">
@@ -118,7 +143,7 @@ function setExerciseHTML (exercise, amount, index) {
             <input class="exercise-container-page-options-answer" type="text" placeholder="Antworten Sie hier...">
 
             <span>
-                <p class="exercise-container-page-options-jump" onclick="skipExercise(${index});">Aufgabe ueberspringen <i class="bi bi-chevron-right"></i></p>
+                <p class="exercise-container-page-options-jump" onclick="skipExercise(${index});">Aufgabe überspringen <i class="bi bi-chevron-right"></i></p>
                 <p class="exercise-container-page-options-submit" onclick="submitExercise(${index});">Aufgabe abgeben</p>
             </span>
         </div>
@@ -130,12 +155,24 @@ function setExerciseHTML (exercise, amount, index) {
 function showExercise (index) {
     if (index === exerciseData.length) {
         clearInterval(timerInterval);
+
+        if (exerciseSettings.type === "test") { window.location.hash = "tricks"; }
+
         showDonePage();
         return;
     }
 
     setExerciseHTML(exerciseData[index], exerciseData.length, index);
     startTimer();
+
+    try {
+        document.querySelector(".exercise-container-page-options-answer").select();
+        document.querySelector(".exercise-container-page-options-answer").addEventListener("keyup", (e) => {
+            if (e.key === "Enter") {
+                submitExercise();
+            }
+        });
+    } catch (e) { console.debug(e); }
 }
 
 
@@ -152,6 +189,10 @@ function startTimer () {
         totalTime += 1;
 
         try {
+            if (exerciseSettings.type === "test") {
+                document.querySelector(".exercise-container-page-info-info > span").innerHTML = getFormattetTime(parseInt(exerciseAdditionalData["maxTime"]) - totalTime);
+            }
+
             document.querySelector(".exercise-container-page-info-time").innerHTML = getFormattetTime(exerciseTimer);
         } catch (e) {
             clearInterval(timerInterval);
@@ -183,9 +224,19 @@ function skipExercise () {
     axios
         .post("/kr/?type=exercise&exercise=skip&doneId=" + document.querySelector(".exercise-container-page").getAttribute("doneId"))
         .then((resolve) => {
-            if (resolve.data.type === "success") {user.userElo = parseInt(resolve.data.data);}
-            showExercise(parseInt(document.querySelector(".exercise-container-page").getAttribute("index")) + 1);
+            if (resolve.data.type === "success") {
+                exercisesMistakeAmount++;
+                user.userElo = parseInt(resolve.data.data);
+            }
+            user.executeIfSettingTrue("waitForServerWhenShowingNextExercise", () => {
+                showExercise(parseInt(document.querySelector(".exercise-container-page").getAttribute("index")) + 1);
+                // Wait for server
+            }, true);
         })
+    user.executeIfSettingFalse("waitForServerWhenShowingNextExercise", () => {
+        showExercise(parseInt(document.querySelector(".exercise-container-page").getAttribute("index")) + 1); 
+        // Dont wait for server
+    });
 }
 
 var reallySkipExercise = false;
@@ -200,14 +251,25 @@ function submitExercise () {
     } else {
         let answerForm = new FormData();
         answerForm.append("answer", document.querySelector(".exercise-container-page-options-answer").value);
-        answerForm.append("exerciseDuration", exerciseTimer);
+        answerForm.append("exerciseTimer", exerciseTimer);
         
         axios
             .post("/kr/?type=exercise&exercise=answer&doneId=" + document.querySelector(".exercise-container-page").getAttribute("doneId"), answerForm)
             .then((resolve) => {
-                if (resolve.data.type === "success") {user.userElo = parseInt(resolve.data.data);}
-                showExercise(parseInt(document.querySelector(".exercise-container-page").getAttribute("index")) + 1);
+                if (resolve.data.type === "success") {
+                    if (!resolve.data.data.answerCorrect) { exercisesMistakeAmount += 1; }
+                    user.userElo = parseInt(resolve.data.data.userElo);
+                }
+                user.executeIfSettingTrue("waitForServerWhenShowingNextExercise", () => {
+                    showExercise(parseInt(document.querySelector(".exercise-container-page").getAttribute("index")) + 1); 
+                    // Wait for server
+                }, true);
             })
+
+        user.executeIfSettingFalse("waitForServerWhenShowingNextExercise", () => {
+            showExercise(parseInt(document.querySelector(".exercise-container-page").getAttribute("index")) + 1); 
+            // Dont wait for server
+        });
     }
 }
 
@@ -218,7 +280,8 @@ function showDonePage () {
         <div class="exercise-container-page-done">
             <h1>Aufgabenpacket fertig!</h1>
 
-            <p><span>1 / 1</span> richtig geloest!</p>
+            <p><span>${exercisesToDoAmount - exercisesMistakeAmount} / ${exercisesToDoAmount}</span> richtig gelöst!</p>
+            ${exerciseSettings.type === "competition" ? `<p>Insgesamt hats du <span>${Math.abs(user.userElo - startElo)}</span> Elo ${user.userElo - startElo >= 0 ? 'gewonnen' : 'verloren'}.</p>` : ''}
             <p>Fuer alle Aufgaben zusammen brauchtest du <span>${totalTime} Sekunden</span>${exerciseData.length > 1 ? `, das sind in etwa <span>${Math.round(totalTime / exerciseData.length)} Sekunden pro Aufgabe</span>` : ''}.</p>
         </div>
 
@@ -230,6 +293,85 @@ function showDonePage () {
             <span>
                 <p class="exercise-container-page-options-jump" onclick="window.location.hash = '';">Zum Menu <i class="bi bi-chevron-right"></i></p>
                 <p class="exercise-container-page-options-submit" onclick="setupExercises();">Direkt weitermachen!</p>
+            </span>
+        </div>
+
+
+        <input style="display: none;" class="exercise-container-page-options-jsinput">
+    </div>
+        `;
+
+    document.querySelector(".exercise-container-page-options-jsinput").addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+            setupExercises();
+        }
+    })
+    document.querySelector(".exercise-container-page-options-jsinput").click();
+    document.querySelector(".exercise-container-page-options-jsinput").focus();
+    document.querySelector(".exercise-container-page-options-jsinput").select();
+}
+
+
+function showCooldownPage () {
+    document.querySelector(".exercise-container").innerHTML = `
+    <div class="exercise-container-page">
+        <div class="exercise-container-page-done">
+            <i class="bi bi-clock-history exercise-container-page-done-error"></i>
+            <h1>Du musst noch etwas warten, bis du diesen Test erneut versuchen kannst!</h1>
+        </div>
+
+
+        
+        <div class="exercise-container-page-options">
+            <div></div>
+
+            <span>
+                <p class="exercise-container-page-options-jump"></p>
+                <p class="exercise-container-page-options-submit" onclick="history.back();">Zum Menu!</p>
+            </span>
+        </div>
+    </div>
+        `;
+}
+
+function showServererrorPage () {
+    document.querySelector(".exercise-container").innerHTML = `
+    <div class="exercise-container-page">
+        <div class="exercise-container-page-done">
+            <i class="bi bi-exclamation-triangle exercise-container-page-done-error"></i>
+            <h1>Es gab einen Servererror beim Abrufen der Aufgaben. Bitte versuche andere Aufgaben!</h1>
+        </div>
+
+
+        
+        <div class="exercise-container-page-options">
+            <div></div>
+
+            <span>
+                <p class="exercise-container-page-options-jump"></p>
+                <p class="exercise-container-page-options-submit" onclick="history.back()">Zum Menu!</p>
+            </span>
+        </div>
+    </div>
+        `;
+}
+
+function showEloDisabledPage () {
+    document.querySelector(".exercise-container").innerHTML = `
+    <div class="exercise-container-page">
+        <div class="exercise-container-page-done">
+            <i class="bi bi-exclamation-triangle exercise-container-page-done-error"></i>
+            <h1>Du hast in deinen <a href="#account" data-link>Einstellungen</a> Aufgaben deaktiviert, die Elo geben / nehmen können. Bitte Ändere die Einstellung oder gehe in das Training!</h1>
+        </div>
+
+
+        
+        <div class="exercise-container-page-options">
+            <div></div>
+
+            <span>
+                <p class="exercise-container-page-options-jump"></p>
+                <p class="exercise-container-page-options-submit" onclick="history.back()">Zum Menu!</p>
             </span>
         </div>
     </div>

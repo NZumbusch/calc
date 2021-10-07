@@ -39,6 +39,49 @@ class MainHandler {
             
         ]);
         this.templates = {};
+
+        this.usedTheme = {
+            "--primary": "#20584d",
+            "--primary-opaque": "#20584d",
+            "--link-font-color": "#008080",
+            "--secondary": "#003030",
+            "--dark": "#292929",
+            "--lighter-dark": "#202020",
+            "--light": "#f6f5f4",
+            "--gray": "#E3E3E3",
+            "--teal": "#009688",
+            "--teal-opaque": "#5dd39e",
+            "--primary-light": "#c5d6d3",
+            "--teal-light": "#b0f0e9",
+            "--opaque-gray": "rgba(58, 58, 58, 0.4)",
+            "--white": "#fffff",
+        }
+        this.defaultTheme = {
+            "--primary": "#20584d",
+            "--primary-opaque": "#20584d",
+            "--link-font-color": "#008080",
+            "--secondary": "#003030",
+            "--dark": "#292929",
+            "--lighter-dark": "#202020",
+            "--light": "#f6f5f4",
+            "--gray": "#E3E3E3",
+            "--teal": "#009688",
+            "--teal-opaque": "#5dd39e",
+            "--primary-light": "#c5d6d3",
+            "--teal-light": "#b0f0e9",
+            "--opaque-gray": "rgba(58, 58, 58, 0.4)",
+            "--white": "#fffff",
+        }
+
+
+        let jsonCustumSettings = this.utility.getCookie("kopfrechnenTheme");
+        if (jsonCustumSettings.length >= 1) {
+            let custumSettings = JSON.parse(jsonCustumSettings);
+            for (let key in custumSettings) {
+                this.usedTheme[key] = custumSettings[key];
+            }
+        }
+        this.setColorTheme(this.usedTheme);
     }
 
 
@@ -71,6 +114,13 @@ class MainHandler {
                     console.debug(message);
                     break;
             }
+        }
+    }
+
+    
+    setColorTheme (theme) {
+        for (let key in theme) {
+            document.documentElement.style.setProperty(key, theme[key]);
         }
     }
 }
@@ -127,7 +177,9 @@ const routes = {
     exercise: {callback: viewBareSite, js: "Exercise", requiresAccount: true},
     elo: {callback: viewSite, js: "Elo", requiresAccount: false},
     account: {callback: viewSite, js: "Account", requiresAccount: true},
-    moderation: {callback: viewSite, js: "Moderation", requiresAccount: true}
+    moderation: {callback: viewSite, js: "Moderation", requiresAccount: true},
+    tricks: {callback: viewSite, js: "Tricks", requiresAccount: true},
+    chat: {callback: viewSite, js: "Chat", requiresAccount: false}
 };
 
 
@@ -141,6 +193,11 @@ axios
     .then((resolve) => {
         if (resolve.data.type === "success") {
             loginUser(resolve.data.data);
+
+            axios.defaults.headers.common = {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-Requested-CSRF": resolve.data.data.csrf
+            }
         }
         checkedUserLogged = true;
     })
@@ -199,6 +256,9 @@ let waitUntilStart = () => {
         if (gr === false) { return; }
 
         if (user !== false || gr.requiresAccount === false) {
+            document.querySelector(".account-modal").style.display = 'none';
+            document.querySelector(".trick-modal").style.display = 'none';
+
             gr.callback();
         } else {
             window.location.hash = "login";
@@ -226,9 +286,16 @@ let waitUntilStart = () => {
     }
 
 
+
+    // set color variables
+    main.setColorTheme("suso");
+
+
     // Instantiate Route Handler
     router();
 }
+
+
 
 
 
@@ -238,6 +305,8 @@ let waitUntilStart = () => {
 document.addEventListener("DOMContentLoaded", () => {
     waitUntilStart();
 });
+
+
 
 
 

@@ -14,7 +14,7 @@ main.templates["Training"] = () => {
 
 
                     <p class="card-text">
-                       Im Trainingsmodus hast du die Moeglichkeit werden dir keine Punkte auf deine Elo-verrechnet. Auch kannst du dir Tips, Loesungen und die Trickbeschreibung zu den Aufgaben anzeigen lassen. <br>
+                       Im Trainingsmodus hast du die Möglichkeit werden dir keine Punkte auf deine Elo-verrechnet. Auch kannst du dir Tips, Lösungen und die Trickbeschreibung zu den Aufgaben anzeigen lassen. <br>
                        Ein weitere Besonderheit des Trainings-Modus ist, dass du dir die Tricks aussuchen kannst, zu denen du trainieren willst.
                     </p>
 
@@ -40,8 +40,8 @@ main.templates["Training"] = () => {
 
 function joinTraining () {
     exerciseSettings = {
-        competition: false,
-        amount: 15
+        type: "training",
+        amount: user.getSettingDefault("defaultTrainingExerciseAmount", 15)
     }
 
     

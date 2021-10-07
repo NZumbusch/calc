@@ -38,7 +38,7 @@ class Utility {
     }
 
 
-    gotoBottom (element) {
+    goToBottom (element) {
         element.scrollTop = element.scrollHeight - element.clientHeight;
     }
 
@@ -177,6 +177,64 @@ class Utility {
             }
         }
     }
+
+
+
+    getTextFile () {
+        return new Promise((resolve, reject) => {
+            if (document.getElementById("utilityFileUpload") === null) {
+                document.body.innerHTML += `
+                <!-- The 'multiple' attribute lets users select multiple files. -->
+                <input type="file" id="utilityFileUpload">
+                `;
+            }
+    
+            let fileSelector = document.getElementById('utilityFileUpload');
+            fileSelector.click();
+            fileSelector.addEventListener('change', (event) => {
+                let file = event.target.files[0];
+        
+    
+                let reader = new FileReader();
+                reader.addEventListener('load', (event) => {
+                    resolve(reader.result);
+                });
+                reader.readAsText(file);
+            });
+        })
+    }
+
+
+    isJSON (string) {
+        string = typeof string !== "string"
+            ? JSON.stringify(string)
+            : string;
+    
+        try {
+            string = JSON.parse(string);
+        } catch (e) {
+            return false;
+        }
+    
+        if (typeof string === "object" && string !== null) {
+            return true;
+        }
+    
+        return false;
+    }
+
+
+
+
+    downloadObjectAsJson (exportObj, exportName) {
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+        var downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("download", exportName + ".json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+      }
 }
 
 
@@ -239,5 +297,3 @@ String.prototype.getIndicesOf = function (str) {
 window.addEventListener("resize", (e) => {
 
 })
-
-

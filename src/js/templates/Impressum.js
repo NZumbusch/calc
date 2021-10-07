@@ -10,7 +10,7 @@ main.templates["Impressum"] = () => {
 
                     <p class="card-text">
                         Diese WebApp wird durch den Hochbegabtenzug des Heinrich-Suso-Gymnasiums Konstanz angeboten.<br>
-                        Um uns zu kontaktieren oder mehr ueber uns zu erfahren koennen Sie unsere <a href="https://hbz.suso.schulen.konstanz.de">Homepage</a> besuchen.
+                        Um uns zu kontaktieren oder mehr über uns zu erfahren können Sie unsere <a href="https://hbz.suso.schulen.konstanz.de">Homepage</a> besuchen.
                     </p>
 
 

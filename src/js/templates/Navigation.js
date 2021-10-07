@@ -18,12 +18,14 @@ main.templates["Navigation"] = () =>{
                     `
                     <li><a href="#competition" data-link><i class="bi bi-stopwatch"></i>Wettkampf</a></li>
                     <li><a href="#training" data-link><i class="bi bi-stars"></i>Training</a></li>
+                    <li><a href="#tricks" data-link><i class="bi bi-stars"></i>Tricks</a></li>
                     <li><a href="#account" data-link><i class="bi bi-person-lines-fill"></i>Benutzerkonto</a></li>
                     `
                 }
 
                 <li><a href="#elo" data-link><i class="bi bi-layer-forward"></i>Elo-Ranking</a></li>
-                <li><a href="#impressum" data-link><i class="bi bi-bell"></i>Impressum</a></li>
+                <li><a href="#chat" data-link><i class="bi bi-chat-dots"></i>Chat</a></li>
+                <!--<li><a href="#impressum" data-link><i class="bi bi-bell"></i>Impressum</a></li>-->
 
                 ${
                     (user === false) 
@@ -33,9 +35,8 @@ main.templates["Navigation"] = () =>{
 
 
                 ${
-                    (user === false && user.userType === 0) 
-                    ? '' :
-                    `<li><a href="#moderation" data-link><i class="bi bi-award navbar-sidebar-list-link-element-icon"></i>Moderation</a></li>`
+                    (user !== false && user.userType === 2) 
+                    ? `<li><a href="#moderation" data-link><i class="bi bi-award navbar-sidebar-list-link-element-icon"></i>Moderation</a></li>` : ''
                 }
             </ul>
         </header>
@@ -55,6 +56,7 @@ main.templates["Navigation"] = () =>{
                         `
                         <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#competition" data-link onclick="hide_navbar();"><i class="bi bi-stopwatch navbar-sidebar-list-link-element-icon"></i>Wettkampf</a></li>
                         <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#training" data-link onclick="hide_navbar();"><i class="bi bi-stars navbar-sidebar-list-link-element-icon"></i>Training</a></li>
+                        <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#tricks" data-link onclick="hide_navbar();"><i class="bi bi-stars navbar-sidebar-list-link-element-icon"></i>Tricks</a></li>
                         <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#account" data-link onclick="hide_navbar();"><i class="bi bi-person-lines-fill navbar-sidebar-list-link-element-icon"></i>Benutzerkontro</a></li>
                         `
                     }
@@ -62,7 +64,8 @@ main.templates["Navigation"] = () =>{
                     <li class="navbar-sidebar-list-spacer"></li>
 
                     <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#elo" data-link onclick="hide_navbar();"><i class="bi bi-layer-forward navbar-sidebar-list-link-element-icon"></i>Elo-Ranking</a></li>
-                    <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#dashboard" data-link onclick="hide_navbar();"><i class="bi bi-chat-dots navbar-sidebar-list-link-element-icon"></i>Impressum</a></li>
+                    <li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#chat" data-link onclick="hide_navbar();"><i class="bi bi-chat-dots navbar-sidebar-list-link-element-icon"></i>Chat</a></li>
+                    <!--<li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element" href="#dashboard" data-link onclick="hide_navbar();"><i class="bi bi-chat-dots navbar-sidebar-list-link-element-icon"></i>Impressum</a></li>-->
                 
                     ${
                         (user === false) 
@@ -71,9 +74,8 @@ main.templates["Navigation"] = () =>{
                     }
 
                     ${
-                        (user === false && user.userType !== 2) 
-                        ? '' :
-                        `<li class="navbar-sidebar-list-spacer"></li><li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element"  href="#moderation" data-link onclick="hide_navbar();"><i class="bi bi-award navbar-sidebar-list-link-element-icon"></i>Moderation</a></li>`
+                        (user !== false && user.userType === 2) 
+                        ? `<li class="navbar-sidebar-list-spacer"></li><li class="navbar-sidebar-list-link"><a class="navbar-sidebar-list-link-element"  href="#moderation" data-link onclick="hide_navbar();"><i class="bi bi-award navbar-sidebar-list-link-element-icon"></i>Moderation</a></li>` : ''
                     }
                 </ul>
             </div>

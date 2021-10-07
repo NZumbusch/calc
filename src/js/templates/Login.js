@@ -16,6 +16,8 @@ main.templates["Login"] = () => {
                         <input type="text" placeholder="Mail-Addresse" class="login-mail">
                         <input type="password" placeholder="Passwort" class="login-password">
                         <button id="login-button">Anmelden</button>
+
+                        <p class="login-forgotpassword" onclick="resetPassword();">Password vergessen?</p>
                     </form>
                 </div>
             </div>
@@ -54,6 +56,11 @@ main.templates["Login"] = () => {
                     .post("/kr/?type=login", form)
                     .then((resolve) => {
                         if (resolve.data.type === "success") {
+                            axios.defaults.headers.common = {
+                                "X-Requested-With": "XMLHttpRequest",
+                                "X-Requested-CSRF": resolve.data.data.csrf
+                            }
+
                             loginUser(resolve.data.data);
 
                             main.utility.fadeOutEffect(document.querySelector(".login-form"));
@@ -69,4 +76,16 @@ main.templates["Login"] = () => {
             })
         }});
     })
+}
+
+
+
+function resetPassword () {
+    if (document.querySelector(".login-mail").value.length < 2) {
+        alert("Bitte geben Sie zuerst eine valide Mailaddresse ein...")
+    }
+
+    axios
+        .post("/kr/?type=resetPassword&userMail=" + document.querySelector(".login-mail").value)
+        .then((resolve) => { alert("Ihr Passwort wurde erfolgreich zurueckgesendet. Sie können Ihr neues Passwort in Ihrem Mail-Postfach finden."); })
 }

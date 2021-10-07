@@ -1,13 +1,12 @@
 .simpleCheckbox + label {
-    display: block;
-    cursor: pointer;
-    
-    position: relative;
+    position: absolute;
+    right: 0px;
 
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 
     > p {
         font-size: 1em;
