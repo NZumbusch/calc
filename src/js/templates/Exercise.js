@@ -61,6 +61,7 @@ function setupExercises () {
                 exerciseAdditionalData = resolve.data.data.data;
                 exercisesToDoAmount = resolve.data.data.pack.length;
                 exercisesMistakeAmount = 0;
+                totalTime = 0;
                 startElo = user.userElo;
                 showExercise(0);
             } else if (resolve.data.error === "Cooldownerror") {
@@ -250,14 +251,25 @@ function submitExercise () {
         }
     } else {
         let answerForm = new FormData();
-        answerForm.append("answer", document.querySelector(".exercise-container-page-options-answer").value);
+        answerForm.append("answer", document.querySelector(".exercise-container-page-options-answer").value.replace(" ", "").replace("\\", ""));
         answerForm.append("exerciseTimer", exerciseTimer);
         
         axios
             .post("/kr/?type=exercise&exercise=answer&doneId=" + document.querySelector(".exercise-container-page").getAttribute("doneId"), answerForm)
             .then((resolve) => {
                 if (resolve.data.type === "success") {
-                    if (!resolve.data.data.answerCorrect) { exercisesMistakeAmount += 1; }
+                    if (!resolve.data.data.answerCorrect) { 
+                        exercisesMistakeAmount += 1; 
+                        document.getElementById("app").style.backgroundColor = "var(--exercise-incorrect)";
+                        setTimeout(() => {
+                            document.getElementById("app").style.backgroundColor = "var(--gray)";
+                        }, 500)
+                    } else {
+                        document.getElementById("app").style.backgroundColor = "var(--exercise-correct)";
+                        setTimeout(() => {
+                            document.getElementById("app").style.backgroundColor = "var(--gray)";
+                        }, 500)
+                    }
                     user.userElo = parseInt(resolve.data.data.userElo);
                 }
                 user.executeIfSettingTrue("waitForServerWhenShowingNextExercise", () => {

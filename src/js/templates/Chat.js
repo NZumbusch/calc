@@ -76,7 +76,7 @@ function loadNewMessages () {
 function getMessageHTML (element) {
     return `
         <div class="chat-messages-message ${user.userId === element.userId ? 'right' : 'left'}">
-            <div class="chat-messages-message-author" userElo="${element.userElo}">
+            <div class="chat-messages-message-author" userElo="${element.userElo}" onclick="messageAuthorModal(event, this, ${element.userId});">
                 <span class="chat-messages-message-author-elo">[ ${element.userElo} ]</span>
                 ${element.userName}: 
             </div>
@@ -88,6 +88,33 @@ function getMessageHTML (element) {
     `;
 }
 
+
+function messageAuthorModal (event, element, userId) {
+    axios
+        .post("/kr/?type=getUserProfileCompact&userId=" + userId)
+        .then((resolve) => {
+            if (resolve.data.type === "success") {
+                let usr = resolve.data.data;
+                document.querySelector(".chat-user-modal").innerHTML = ``;
+                document.querySelector(".chat-user-modal").innerHTML += `
+                    <div class="chat-user-modal-instance" style="top: ${event.clientY}px; left: ${event.clientX}px;">
+                        <i class="bi bi-x-circle chat-user-modal-instance-close" onclick="document.querySelector('.chat-user-modal').innerHTML = '';"></i>
+                    
+                        <p class="chat-user-modal-instance-author">${usr.userName} ${usr.userSurname} <span class="chat-user-modal-instance-author-elo">[ ${usr.userElo} ]</span></p>
+                        <div class="chat-user-modal-instance-info1">
+                            <p class="chat-user-modal-instance-info1-mail">${usr.userMail}</p>
+
+                            <p>Letzte Aufgabe gemacht am ${main.utility.timeConverter(usr.userLastExercises[0].doneCreated)}</p>
+
+                            <p>Insgesamt ${usr.userLearned} Aufgaben gelernt...</p>
+                        </div>
+                    </div>
+                `;
+
+                setElementStylesByElo(document.querySelector(".chat-user-modal-instance-author-elo"), usr.userElo);
+            }
+        })
+}
 
 
 function sendMessage () {
@@ -116,53 +143,7 @@ function setUserEloColors () {
         
             // elo = Math.floor(Math.random() * 3000); For testing
 
-            let color = false;
-            let fontWeight = '';
-            let font = '';
-            let fontSize = false;
-            if (elo <= 1000) {
-                color = '#868686';
-                fontWeight = '300';
-            } else if (elo <= 1250) {
-                color = 'var(--dark)';
-                fontWeight = '500';
-            } else if (elo <= 1500) {
-                color = '#073b4c';
-                fontWeight = '500';
-            } else if (elo <= 1750) {
-                color = '#118ab2';
-                fontWeight = '700';
-            } else if (elo <= 2000) {
-                color = '#06d6a0';
-                fontWeight = '700';
-            } else if (elo <= 2250) {
-                color = '#ffd166';
-                fontWeight = '1000';
-                font = '';
-                fontSize = '1.2em';
-            } else if (elo <= 2500) {
-                color = '#ef476f';
-                fontWeight = '1000';
-                font = '';
-                fontSize = '1.2em';
-            } else {
-                color = '#c9184a';
-                fontWeight = '1000';
-                font = '';
-                fontSize = '1.2em';
-            }
-
-
-            try {
-                element.style.color = color;
-
-                element.style.fontWeight = fontWeight;
-                
-    
-                element.style.fontFamily = font;
-            } catch {}
-            
-
+            setElementStylesByElo(element, elo);
 
 
             if (elo <= 1500) {
@@ -174,4 +155,53 @@ function setUserEloColors () {
             }
         })
     });
+}
+
+
+function setElementStylesByElo (element, elo) {
+    let color = false;
+    let fontWeight = '';
+    let font = '';
+    let fontSize = false;
+    if (elo <= 1000) {
+        color = '#868686';
+        fontWeight = '300';
+    } else if (elo <= 1250) {
+        color = 'var(--dark)';
+        fontWeight = '500';
+    } else if (elo <= 1500) {
+        color = '#073b4c';
+        fontWeight = '500';
+    } else if (elo <= 1750) {
+        color = '#118ab2';
+        fontWeight = '700';
+    } else if (elo <= 2000) {
+        color = '#06d6a0';
+        fontWeight = '700';
+    } else if (elo <= 2250) {
+        color = '#ffd166';
+        fontWeight = '1000';
+        font = '';
+        fontSize = '1.2em';
+    } else if (elo <= 2500) {
+        color = '#ef476f';
+        fontWeight = '1000';
+        font = '';
+        fontSize = '1.2em';
+    } else {
+        color = '#c9184a';
+        fontWeight = '1000';
+        font = '';
+        fontSize = '1.2em';
+    }
+
+
+    try {
+        element.style.color = color;
+
+        element.style.fontWeight = fontWeight;
+        
+
+        element.style.fontFamily = font;
+    } catch {}
 }

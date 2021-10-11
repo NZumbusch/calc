@@ -16,12 +16,12 @@ main.templates["Signup"] = () => {
                             <div class="signup-left">
                                 <input type="text" placeholder="Vorname" id="userName">
                                 <input type="text" placeholder="Nachname" id="userSurname">
-                                <input type="text" placeholder="Mailaddresse" id="userMail">
+                                <input type="text" placeholder="Mailadresse" id="userMail">
                             </div>
                             <div class="signup-right">
                                 <input type="text" placeholder="Geburtsdatum" id="userBirthday">
                                 <input type="password" placeholder="Passwort" id="userPassword1">
-                                <input type="password" placeholder="Nochmals" id="userPassword2">
+                                <input type="password" placeholder="Passwort wiederholen" id="userPassword2">
                             </div>
                         </div>
                         
@@ -103,7 +103,7 @@ main.templates["Signup"] = () => {
                                     checkedUserLogged = true;
                                 })
                         } else if (resolve.data.error === "Requesterror" && resolve.data.debug.indexOf("exists") !== -1) {
-                            alert("Es existiert bereits ein Nutzer mit dieser Mailaddresse...")
+                            alert("Es existiert bereits ein Nutzer mit dieser Mailadresse...")
                         }
                     }, (reject) => {throw new Error(reject)})
                     .catch((e) => main.debug)

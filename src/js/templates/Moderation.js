@@ -10,6 +10,10 @@ main.templates["Moderation"] = () => {
                     <p class="card-text">
                         Dies ist die Moderationsseite des Kopfrechenprojektes. Hier können Aufgaben erstellt und versteckt werden, Tricks hinzugefuegt und Seasons verwaltet.
                     </p>
+                    <p class="card-text">
+                        Link zu Plesk:
+                        <a href="https://plesk-belwue-03.dmz-skn.de:8443/login_up.php?success_redirect_url=%2F">https://plesk-belwue-03.dmz-skn.de:8443/login_up.php?success_redirect_url=%2F</a>
+                    </p>
                 </div>
             </div>
 

@@ -40,22 +40,7 @@ class MainHandler {
         ]);
         this.templates = {};
 
-        this.usedTheme = {
-            "--primary": "#20584d",
-            "--primary-opaque": "#20584d",
-            "--link-font-color": "#008080",
-            "--secondary": "#003030",
-            "--dark": "#292929",
-            "--lighter-dark": "#202020",
-            "--light": "#f6f5f4",
-            "--gray": "#E3E3E3",
-            "--teal": "#009688",
-            "--teal-opaque": "#5dd39e",
-            "--primary-light": "#c5d6d3",
-            "--teal-light": "#b0f0e9",
-            "--opaque-gray": "rgba(58, 58, 58, 0.4)",
-            "--white": "#fffff",
-        }
+        
         this.defaultTheme = {
             "--primary": "#20584d",
             "--primary-opaque": "#20584d",
@@ -70,10 +55,13 @@ class MainHandler {
             "--primary-light": "#c5d6d3",
             "--teal-light": "#b0f0e9",
             "--opaque-gray": "rgba(58, 58, 58, 0.4)",
-            "--white": "#fffff",
+            "--white": "#fff",
+            "--exercise-correct": "#1d7c1d",
+            "--exercise-incorrect": "#a53636"
         }
 
 
+        this.usedTheme = this.defaultTheme;
         let jsonCustumSettings = this.utility.getCookie("kopfrechnenTheme");
         if (jsonCustumSettings.length >= 1) {
             let custumSettings = JSON.parse(jsonCustumSettings);
